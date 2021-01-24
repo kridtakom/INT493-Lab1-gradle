@@ -5,16 +5,16 @@ on:
   brancheds: -main
 
 jobs:
-  build: 
-    runs-on: ubunru-lastest
-    name: Run Java and build
+  build:
+    runs-on: ubuntu-latest
+    name: Running Java ${{ matrix.java }} compile
     steps:
-      -uses: actions/checkout@v2
-      -name: Setup JDK
-      -uses: actions/setup-java@v1
+      - uses: actions/checkout@v2
+      - name: Set up JDK 
+        uses: actions/setup-java@v1
         with:
-          java-version: 1.8
-      -name: Build jar
+          java-version: 1.11
+      - name: Compile code
        run: ./gradlew build
 
 deploy:
@@ -26,7 +26,7 @@ deploy:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 1.8
+          java-version: 1.1
       - name: Generate the package
         run: ./gradlew build
       - name: Deploy the package to the remote server
