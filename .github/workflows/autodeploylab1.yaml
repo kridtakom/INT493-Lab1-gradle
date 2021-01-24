@@ -2,7 +2,7 @@ name: Auto Deploy Lab1
 
 on:
   push:
-  brancheds: -main
+    branches: [main]
 
 jobs:
   build:
@@ -10,14 +10,14 @@ jobs:
     name: Running Java ${{ matrix.java }} compile
     steps:
       - uses: actions/checkout@v2
-      - name: Set up JDK 
+      - name: Set up JDK
         uses: actions/setup-java@v1
         with:
           java-version: 1.11
       - name: Compile code
         run: ./gradlew build
 
-deploy:
+  deploy:
     runs-on: ubuntu-latest
     name: Deploy the JAR file to the remote server
     needs: build
@@ -26,7 +26,7 @@ deploy:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: 1.1
+          java-version: 1.11
       - name: Generate the package
         run: ./gradlew build
       - name: Deploy the package to the remote server
@@ -47,4 +47,3 @@ deploy:
           user: ${{ secrets.SSH_USER }}
           pass: ${{ secrets.SSH_PASSWORD }}
           args: "-tt"
-
