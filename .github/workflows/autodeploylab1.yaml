@@ -40,11 +40,16 @@ jobs:
           source: "build/libs/webapilab1-0.0.1-SNAPSHOT.jar"
           target: "INT493lab1"
       - name: Run a script on remote server (start the application)
-        if: always()
-        uses: fifsky/ssh-action@master
+        uses:  appleboy/ssh-action@master
         with:
-          command: |
-            cd /INT493lab1/build/libs && mkdir boom
           host: ${{ secrets.HOST }}
           user: ${{ secrets.SSH_USER }}
           pass: ${{ secrets.SSH_PASSWORD }}
+          command_timeout: 1m
+          script: |
+            # Rename
+            mv target/*.jar simple-web-api.jar
+            # Kill old process
+            kill $(pidof java)
+            # Start application on background process
+            java -jar simple-web-api.jar > app.log 2>&1 </dev/null &
