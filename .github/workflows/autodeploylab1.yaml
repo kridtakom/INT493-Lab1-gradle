@@ -48,4 +48,4 @@ jobs:
           host: ${{ secrets.HOST }}
           user: ${{ secrets.SSH_USER }}
           pass: ${{ secrets.SSH_PASSWORD }}
-          args: "-tt"
+          args: "-tt -vvv"
