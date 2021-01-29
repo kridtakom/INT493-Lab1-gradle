@@ -44,7 +44,7 @@ jobs:
         uses: fifsky/ssh-action@master
         with:
           command: |
-            cd /INT493lab1 && nohup java -jar webapilab1-0.0.1-SNAPSHOT.jar > /dev/null &
+            cd /home/azureuser/INT493lab1/build/libs && nohup java -jar webapilab1-0.0.1-SNAPSHOT.jar > /dev/null &
           host: ${{ secrets.HOST }}
           user: ${{ secrets.SSH_USER }}
           pass: ${{ secrets.SSH_PASSWORD }}
