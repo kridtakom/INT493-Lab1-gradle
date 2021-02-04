@@ -1,8 +1,11 @@
 name: Auto Deploy Lab1
 
 on:
+  on:
   push:
-    branches: [main]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   setup-server:
