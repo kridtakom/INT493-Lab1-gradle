@@ -8,66 +8,66 @@ jobs:
   setup-server:
     runs-on: ubuntu-latest
     env:
-      RESOURCE_GROUP: ${{ secrets.RESOURCE_GROUP }}
-      DISK_NAME: ${{ secrets.DISK_NAME }}
-      VM_SIZE: ${{ secrets.VM_SIZE }}
-      VM_NAME: ${{ secrets.VM_NAME }}
-      VM_IMAGE: ${{ secrets.VM_IMAGE }}
+      RESOURCE_GROUP: lab1_group
+      DISK_NAME: lab1_DataDisk_0
+      VM_SIZE: Standard_B1s
+      VM_NAME: lab1
+      VM_IMAGE: Canonical:0001-com-ubuntu-server-focal:20_04-lts-gen2:20.04.202101191
     steps:
-      - uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: Delete VM
-        run: |
-          az vm delete \
-            --resource-group $RESOURCE_GROUP \
-            --name $VM_NAME -y
-      - name: Delete Disk
-        run: |
-          az disk delete \
-            --name $DISK_NAME \
-            --resource-group $RESOURCE_GROUP -y
-      - name: Create Disk
-        run: |
-          az disk create \
-            --name $DISK_NAME \
-            --resource-group $RESOURCE_GROUP \
-            --size-gb 8
-      - name: Create VM
-        run: |
-          az vm create \
-            --resource-group $RESOURCE_GROUP \
-            --name $VM_NAME \
-            --image $VM_IMAGE \
-            --admin-username ${{ secrets.SSH_USER }} \
-            --admin-password ${{ secrets.SSH_PASSWORD }} \
-            --attach-data-disks $DISK_NAME \
-            --size $VM_SIZE
-      - name: Open Port
-        run: |
-          az vm open-port \
-            --port 8080 \
-            --name $VM_NAME \
-            --priority 1010 \
-            --resource-group $RESOURCE_GROUP
-      - name: Delete DNS record set
-        run: |
-          az network dns record-set a delete \
-            --name @ \
-            --resource-group $RESOURCE_GROUP \
-            --zone-name ${{ secrets.HOST }} -y
-      - name: Create a new DNS record
-        run: |
-          IP=$(az vm show -d -g $RESOURCE_GROUP -n $VM_NAME --query publicIps -o tsv)
-          az network dns record-set a create \
-            --name @ \
-            --resource-group $RESOURCE_GROUP \
-            --zone-name ${{ secrets.HOST }} -o none
-          az network dns record-set a add-record --ipv4-address $IP \
-            --record-set-name @ \
-            --resource-group $RESOURCE_GROUP \
-            --zone-name ${{ secrets.HOST }} \
-            --ttl 300 -o none
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Delete VM
+      run: |
+        az vm delete \
+          --resource-group $RESOURCE_GROUP \
+          --name $VM_NAME -y
+    - name: Delete Disk
+      run: |
+        az disk delete \
+          --name $DISK_NAME \
+          --resource-group $RESOURCE_GROUP -y
+    - name: Create Disk
+      run: |
+        az disk create \
+          --name $DISK_NAME \
+          --resource-group $RESOURCE_GROUP \
+          --size-gb 8
+    - name: Create VM
+      run: |
+        az vm create \
+          --resource-group $RESOURCE_GROUP \
+          --name $VM_NAME \
+          --image $VM_IMAGE \
+          --admin-username ${{ secrets.SSH_USER }} \
+          --admin-password ${{ secrets.SSH_PASSWORD }} \
+          --attach-data-disks $DISK_NAME \
+          --size $VM_SIZE
+    - name: Open Port
+      run: |
+        az vm open-port \
+          --port 8080 \
+          --name $VM_NAME \
+          --priority 1010 \
+          --resource-group $RESOURCE_GROUP
+    - name: Delete DNS record set
+      run: |
+        az network dns record-set a delete \
+          --name @ \
+          --resource-group $RESOURCE_GROUP \
+          --zone-name ${{ secrets.HOST }} -y
+    - name: Create a new DNS record
+      run: |
+        IP=$(az vm show -d -g $RESOURCE_GROUP -n $VM_NAME --query publicIps -o tsv)
+        az network dns record-set a create \
+          --name @ \
+          --resource-group $RESOURCE_GROUP \
+          --zone-name ${{ secrets.HOST }} -o none
+        az network dns record-set a add-record --ipv4-address $IP \
+          --record-set-name @ \
+          --resource-group $RESOURCE_GROUP \
+          --zone-name ${{ secrets.HOST }} \
+          --ttl 300 -o none
 
   deploy:
     runs-on: ubuntu-latest
